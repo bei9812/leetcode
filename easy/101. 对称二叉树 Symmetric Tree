@@ -1,0 +1,20 @@
+给你一个二叉树的根节点 root ， 检查它是否轴对称。
+Given the root of a binary tree, check whether it is a mirror of itself (i.e., symmetric around its center).
+
+class Solution {
+    public boolean isSymmetric(TreeNode root) {
+        return isMirror(root.left, root.right);
+        
+    }
+
+    public boolean isMirror(TreeNode p, TreeNode q){
+        if(p == null && q == null) {
+            return true;
+        }
+        if(p == null || q == null){
+            return false;
+        }
+        return p.val == q.val && isMirror(p.left, q.right) && isMirror(p.right, q.left);
+    }
+
+}
