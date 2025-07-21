@@ -1,0 +1,147 @@
+给你一个二叉搜索树的根节点 root ，返回 树中任意两不同节点值之间的最小差值 。
+Given the root of a Binary Search Tree (BST), return the minimum absolute difference between the values of any two different nodes in the tree.
+
+差值是一个正数，其数值等于两值之差的绝对值。
+class Solution {
+    int result = Integer.MAX_VALUE;
+    TreeNode pre = null;
+    public int getMinimumDifference(TreeNode root) {
+        travesal(root);
+        return result;
+    }
+
+    private void travesal(TreeNode cur){
+        if(cur == null) return;
+        travesal(cur.left);
+        if(pre != null){
+            result = Math.min(Math.abs(cur.val - pre.val), result);
+        }
+        pre = cur;
+        travesal(cur.right);
+    }
+        
+}
+
+非递归写法
+class Solution {
+    public int getMinimumDifference(TreeNode root) {
+
+        // 设置一个变量用来记录两不同节点值之间的差值
+        int result =  Integer.MAX_VALUE;
+
+        // 设置一个栈，用来保存路径
+        Stack<TreeNode> stack = new Stack<>();
+
+        // 设置一个节点，一开始指向根节点
+        TreeNode curNode = root;
+        
+        // 设置一个节点 preNode ，用来记录当前遍历节点的上一个节点
+        TreeNode preNode = null;
+
+        // 设置三种状态，方便表示当前遍历当前节点的时候进行到哪一步了
+        // 每个节点都有 左、右、上 这三种状态
+        // 按照 左 --> 右 --> 上 的顺序观察每个节点
+
+        // 左代表该节点的左右孩子节点都没有遍历
+        int nodeLeft = 100;
+
+        // 右代表该节点的左孩子节点已经遍历，右孩子节点还没有遍历
+        int nodeRight = 200;
+
+        // 上代表左右孩子节点都已经遍历，需要返回到它的父节点
+        int nodeUp = 300;
+
+        // 每个节点的初始化状态都是从 左 开始
+        int nodeState = nodeLeft;
+
+
+        // 对二叉树进行遍历
+        while(curNode != null){
+
+            // 位置 ① 
+
+            // 如果当前节点的状态是【左】，说明该节点的左右孩子节点都没有遍历
+            if(nodeState == nodeLeft){
+
+                // 如果当前节点有左子树
+                if(curNode.left != null){
+
+                    // 先把当前节点加入到栈中，用来记录节点移动的路径
+                    stack.push(curNode);
+
+                    // 开始观察当前节点的左孩子节点，代码来到了位置 ① 
+                    curNode = curNode.left;
+                }else{
+
+                    // 如果当前节点没有左子树，切换当前节点的状态为【右】
+                    // 代码来到了位置 ① 
+                    nodeState = nodeRight;
+                }
+
+            }else if(nodeState == nodeRight){ // 如果当前节点的状态是【右】，说明该节点的左孩子节点已经遍历，右孩子节点还没有遍历
+
+                // 二叉树中序遍历的处理结果
+                if(preNode != null){
+                    result = Math.min(result,curNode.val - preNode.val);
+                }
+
+                preNode = curNode;
+
+                // 如果当前节点有右子树
+                if(curNode.right != null){
+
+                    // 先把当前节点加入到栈中，用来记录节点移动的路径
+                    stack.push(curNode);
+
+                    // 开始观察当前节点的右孩子节点
+                    curNode = curNode.right;
+
+                    // 每个节点开始的状态都是【左】开始，所以需要重新设置一下节点的状态
+                    nodeState = nodeLeft;
+
+                    // 执行完上面三行代码，代码来到了位置 ①     
+
+                }else{
+                    // 如果当前节点没有右子树，切换当前节点的状态为【上】
+                    // 代码来到了位置 ①
+                    nodeState = nodeUp;
+                }
+            }else if(nodeState == nodeUp){ // 如果当前节点的状态是【上】，说明左右孩子节点都已经遍历，需要返回到它的父节点
+
+                // 需要返回到当前节点的父节点位置，通过栈顶元素来获取当前节点的父节点
+                // 首先构建一个空的节点
+                TreeNode parent = null;
+
+                // 如果栈中有元素
+                if(!stack.isEmpty()){
+
+                    // 那么，栈顶元素就是当前节点的父节点
+                    parent = stack.pop();
+
+                    // 判断一下父节点的左节点是否为当前节点
+                    // 比如这颗二叉树
+                    //           1
+                    //         /   \
+                    //        2     3
+                    //       / \     \
+                    //      4   5     6
+                    //  如果当前节点是 4 ，那么 4 的父节点是 2，2 的左孩子节点是 4，此时需要切换状态为【右】
+                    //  如果当前节点是 5 ，那么 5 的父节点是 2，2 的左孩子节点是 4，此时不需要切换状态
+
+                    // 如果父节点的左节点为当前节点
+                    if(parent.left == curNode){
+                        // 切换当前节点的状态为【右】
+                        nodeState = nodeRight;
+                    }
+                }
+                // 开始观察当前节点的父节点
+                // 如果上述代码中栈中有元素，那么 parent 有值，代码来到了位置 ①
+                // 如果上述代码中栈中没有元素，那么 parent 没有值，会跳出循环
+                curNode = parent;
+
+            }
+        }
+        // 返回结果
+        return result;
+    }
+}
