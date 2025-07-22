@@ -1,0 +1,19 @@
+给你一个整数数组 nums ，其中元素已经按 升序 排列，请你将其转换为一棵 平衡 二叉搜索树。
+Given an integer array nums where the elements are sorted in ascending order, convert it to a height-balanced binary search tree.
+
+
+class Solution {
+    public TreeNode sortedArrayToBST(int[] nums) {
+        return buildBTS(nums, 0, nums.length -1);
+    }
+
+    private TreeNode buildBTS(int[] nums, int left, int right){
+        if(left > right) return null;
+
+        int mid = left + (right - left)/2;
+        TreeNode root = new TreeNode(nums[mid]);
+        root.left = buildBTS(nums, left, mid -1);
+        root.right = buildBTS(nums, mid + 1, right);
+        return root;
+    }
+}
