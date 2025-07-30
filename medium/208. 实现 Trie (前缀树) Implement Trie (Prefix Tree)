@@ -1,0 +1,73 @@
+Trie（发音类似 "try"）或者说 前缀树 是一种树形数据结构，用于高效地存储和检索字符串数据集中的键。这一数据结构有相当多的应用情景，例如自动补全和拼写检查。
+
+请你实现 Trie 类：
+
+Trie() 初始化前缀树对象。
+void insert(String word) 向前缀树中插入字符串 word 。
+boolean search(String word) 如果字符串 word 在前缀树中，返回 true（即，在检索之前已经插入）；否则，返回 false 。
+boolean startsWith(String prefix) 如果之前已经插入的字符串 word 的前缀之一为 prefix ，返回 true ；否则，返回 false 。
+
+A trie (pronounced as "try") or prefix tree is a tree data structure used to efficiently store and retrieve keys in a dataset of strings. There are various applications of this data structure, such as autocomplete and spellchecker.
+
+Implement the Trie class:
+
+Trie() Initializes the trie object.
+void insert(String word) Inserts the string word into the trie.
+boolean search(String word) Returns true if the string word is in the trie (i.e., was inserted before), and false otherwise.
+boolean startsWith(String prefix) Returns true if there is a previously inserted string word that has the prefix prefix, and false otherwise.
+
+class Trie {
+    private class TrieNode {
+        TrieNode[] children;
+        boolean isEnd;
+        public TrieNode() {
+            children = new TrieNode[26];
+            isEnd = false;
+        }
+    }
+    private TrieNode root;
+    public Trie() {
+        root = new TrieNode();
+    }
+    
+    
+    public void insert(String word) {
+       TrieNode current = root;
+       for (char c: word.toCharArray()){
+            int index = c - 'a';
+            if(current.children[index] == null){
+                current.children[index] = new TrieNode();
+            }
+            current = current.children[index];
+       }
+       current.isEnd = true;
+    }
+    
+    public boolean search(String word) {
+      TrieNode node = findNode(word);
+      return node != null && node.isEnd;
+    }
+    
+    public boolean startsWith(String prefix) {
+        return findNode(prefix) != null;
+    }
+
+    private TrieNode findNode(String s) {
+        TrieNode current = root;
+        for(char c: s.toCharArray()){
+            int index = c - 'a';
+            if(current.children[index] == null){
+                return null;
+            }
+            current = current.children[index];
+        }
+        return current;
+    }
+}
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie obj = new Trie();
+ * obj.insert(word);
+ * boolean param_2 = obj.search(word);
+ * boolean param_3 = obj.startsWith(prefix);
+ */
