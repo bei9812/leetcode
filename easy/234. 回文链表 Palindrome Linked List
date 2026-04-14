@@ -40,3 +40,46 @@ class Solution {
 
 
 }
+
+写法二：
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+        ListNode leftEnd = middleNode(head);
+
+        ListNode rightStart = reverseList(leftEnd.next);
+
+        ListNode a = head;
+        ListNode b = rightStart;
+
+        boolean result = true;
+        while (result && b != null) {
+            if (a.val != b.val) {
+                result = false;
+            }
+            a = a.next;
+            b = b.next;
+        }
+        return result;
+    }
+
+    private ListNode middleNode(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return slow;
+    }
+
+    private ListNode reverseList(ListNode head) {
+        if (head == null || head.next == null)
+            return head;
+        ListNode newHead = reverseList(head.next);
+        head.next.next = head;
+        head.next = null;
+        return newHead;
+
+    }
+
+}

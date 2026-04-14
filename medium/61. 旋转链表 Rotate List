@@ -1,0 +1,32 @@
+给你一个链表的头节点 head ，旋转链表，将链表每个节点向右移动 k 个位置。
+Given the head of a linked list, rotate the list to the right by k places.
+
+class Solution {
+    public ListNode rotateRight(ListNode head, int k) {
+        if (head == null)
+            return head;
+
+        int len = 0;
+        ListNode tempHead = head;
+        while (tempHead != null) {
+            tempHead = tempHead.next;
+            len++;
+        }
+
+        k = k % len;
+
+        ListNode former = head;
+        ListNode latter = head;
+        for (int i = 0; i < k; i++) {
+            former = former.next;
+        }
+        while (former.next != null) {
+            former = former.next;
+            latter = latter.next;
+        }
+        former.next = head;
+        ListNode newHead = latter.next;
+        latter.next = null;
+        return newHead;
+    }
+}
